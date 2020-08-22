@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/dp_16"
+    android:layout_marginTop="@dimen/dp_16"
+    android:layout_marginEnd="@dimen/dp_16"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/titlePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/sp_14"
+        tools:text="Photo" />
+
+    <RelativeLayout
+        android:layout_width="@dimen/dp_150"
+        android:layout_height="@dimen/dp_150">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/captureImageView"
+            android:layout_width="@dimen/dp_120"
+            android:layout_height="@dimen/dp_120"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:background="#00FFFF"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:scaleType="fitXY" />
+
+        <ImageView
+            android:id="@+id/deleteImage"
+            android:layout_width="@dimen/dp_20"
+            android:layout_height="@dimen/dp_20"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ban"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+
+</LinearLayout>
