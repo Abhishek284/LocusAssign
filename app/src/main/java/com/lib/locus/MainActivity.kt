@@ -80,7 +80,8 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         menuSearch.isVisible = true
         menuSearch.setOnMenuItemClickListener {
             onSubmitClicked(adapter.getDataModel())
-            Toast.makeText(this, getString(R.string.text_logging_successful), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.text_logging_successful), Toast.LENGTH_LONG)
+                .show()
             return@setOnMenuItemClickListener true
         }
 
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 ViewType.IMAGE -> {
                     Log.d(
                         USER_SELECTION_TAG,
-                        "PhotoId = " + it.dataResponse?.id + " value = " + it.imageBitmap
+                        "PhotoId = " + it.dataResponse?.id + "; Image = " + it.imageBitmap
                     )
                 }
                 ViewType.OPTIONS -> {
@@ -104,14 +105,21 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     }
                     Log.d(
                         USER_SELECTION_TAG,
-                        "SingleChoiceId = " + it.dataResponse?.id + " value = " + string
+                        "SingleChoiceId = " + it.dataResponse?.id + "; Selected option = " + string
                     )
                 }
                 ViewType.COMMENT -> {
-                    Log.d(
-                        USER_SELECTION_TAG,
-                        "CommentId = " + it.dataResponse?.id + " value = " + it.comment
-                    )
+                    if (it.isCommentChecked == true) {
+                        Log.d(
+                            USER_SELECTION_TAG,
+                            "CommentId = " + it.dataResponse?.id + "; Comment = " + it.comment
+                        )
+                    } else {
+                        Log.d(
+                            USER_SELECTION_TAG,
+                            "CommentId = " + it.dataResponse?.id + "; Is Comment Provided? = " + false
+                        )
+                    }
                 }
             }
         }

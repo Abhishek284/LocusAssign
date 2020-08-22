@@ -37,9 +37,6 @@ class DataMapper(private val context: Context) {
             locusDataModel.dataResponse = it
             locusDataModelList.add(locusDataModel)
         }
-        if(locusDataModelList.isNotEmpty()){
-            locusDataModelList.add(LocusDataModel(viewType = ViewType.SUBMIT))
-        }
         return locusDataModelList
     }
 }

@@ -15,5 +15,5 @@ data class LocusDataModel(
 )
 
 enum class ViewType {
-    IMAGE, OPTIONS, COMMENT, SUBMIT
+    IMAGE, OPTIONS, COMMENT
 }
