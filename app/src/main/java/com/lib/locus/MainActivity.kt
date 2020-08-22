@@ -1,12 +1,16 @@
 package com.lib.locus
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lib.locus.adapter.DataAdapter
@@ -45,7 +49,37 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         viewModel.getProductDataList("locus_data.json")
     }
 
-    private fun startCamera() {
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            == PackageManager.PERMISSION_DENIED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_REQUEST_CODE
+            )
+        } else {
+            startCamera()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_REQUEST_CODE && (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            )
+                    == PackageManager.PERMISSION_GRANTED)
+        ) {
+            startCamera()
+        }
+    }
+
+    fun startCamera() {
         val intent = Intent("android.media.action.IMAGE_CAPTURE")
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
@@ -53,16 +87,16 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE) {
-            val imageBitmap: Bitmap = data?.extras?.get("data") as Bitmap
-            adapter.setImageBitmap(position, imageBitmap)
-
+            data?.extras?.get("data")?.let {
+                adapter.setImageBitmap(position, it as Bitmap)
+            }
         }
     }
 
     override fun onItemClicked(int: Int, imageBitmap: Bitmap?) {
         if (imageBitmap == null) {
             position = int
-            startCamera()
+            checkCameraPermission()
         } else {
             ImageBitmapLocalCache.getInstance().imageBitmap = imageBitmap
             startActivity(Intent(this, ImageViewActivity::class.java))
