@@ -6,16 +6,16 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
 import androidx.recyclerview.widget.RecyclerView
 import com.lib.locus.R
 import com.lib.locus.listener.OnItemClickListener
 import com.lib.locus.model.LocusDataModel
 import com.lib.locus.model.ViewType
+import com.lib.locus.viewholder.ChoiceDataViewHolder
+import com.lib.locus.viewholder.CommentViewHolder
+import com.lib.locus.viewholder.PhotoDataViewHolder
 import kotlinx.android.synthetic.main.item_camera.view.*
-import kotlinx.android.synthetic.main.item_choice.view.*
 import kotlinx.android.synthetic.main.item_comment.view.*
-import kotlinx.android.synthetic.main.item_submit.view.*
 
 
 class DataAdapter(private val onItemClickListener: OnItemClickListener) :
@@ -50,7 +50,8 @@ class DataAdapter(private val onItemClickListener: OnItemClickListener) :
                         R.layout.item_comment,
                         parent,
                         false
-                    )
+                    ),
+                    CustomTextWatcher()
                 )
             }
             else -> {
@@ -76,13 +77,13 @@ class DataAdapter(private val onItemClickListener: OnItemClickListener) :
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         when (holder) {
             is PhotoDataViewHolder -> {
-                holder.bindData(position)
+                holder.bindData(position, locusDataModel?.get(position),onItemClickListener)
             }
             is ChoiceDataViewHolder -> {
-                holder.bindData(position)
+                holder.bindData(locusDataModel?.get(position))
             }
             is CommentViewHolder -> {
-                holder.bindData(position)
+                holder.bindData(position, locusDataModel?.get(position))
             }
         }
     }
@@ -97,94 +98,23 @@ class DataAdapter(private val onItemClickListener: OnItemClickListener) :
 
     }
 
-    inner class PhotoDataViewHolder(view: View) : BaseViewHolder(view) {
-
-        fun bindData(position: Int) {
-            itemView.titlePhoto.text = locusDataModel?.get(position)?.dataResponse?.title
-            locusDataModel?.get(position)?.imageBitmap?.let {
-                itemView.captureImageView.setImageBitmap(it)
-                itemView.deleteImage.visibility = View.VISIBLE
-            } ?: let {
-                itemView.captureImageView.setImageBitmap(null)
-                itemView.deleteImage.visibility = View.GONE
-            }
-            itemView.captureImageView.setOnClickListener {
-                onItemClickListener.onItemClicked(
-                    position,
-                    locusDataModel?.get(position)?.imageBitmap
-                )
-            }
-            itemView.deleteImage.setOnClickListener {
-                onItemClickListener.onItemDeleted(position)
-            }
-        }
-    }
-
-    inner class ChoiceDataViewHolder(view: View) : BaseViewHolder(view) {
-
-        fun bindData(position: Int) {
-            itemView.titleChoice.text =
-                locusDataModel?.get(position)?.dataResponse?.title
-            itemView.radioGroup.removeAllViews()
-            locusDataModel?.get(position)?.dataResponse?.dataMap?.options?.forEach {
-                val radioButton: RadioButton = RadioButton(itemView.context)
-                radioButton.text = it
-                itemView.radioGroup.addView(radioButton)
-            }
-            itemView.radioGroup.setOnCheckedChangeListener(null)
-            locusDataModel?.get(position)?.selectPosition?.let {
-                (itemView.radioGroup.getChildAt(it) as RadioButton).isChecked = true
-            }
-            itemView.radioGroup.setOnCheckedChangeListener { radioGroup, i ->
-                    locusDataModel?.get(position)?.selectPosition =
-                        radioGroup.indexOfChild(radioGroup.findViewById(i))
-            }
-        }
-
-    }
-
-    inner class CommentViewHolder(view: View) : BaseViewHolder(view) {
-
-        fun bindData(position: Int) {
-            locusDataModel?.get(position)?.dataResponse?.title?.let {
-                itemView.titleComment.text = it
-            }
-            locusDataModel?.get(position)?.isCommentChecked?.let {
-                if (it) {
-                    itemView.commentView.visibility = View.VISIBLE
-                } else {
-                    itemView.commentView.visibility = View.GONE
-                }
-            }
-            itemView.switchComment.setOnCheckedChangeListener { _, boolean ->
-                if (boolean) {
-                    itemView.commentView.visibility = View.VISIBLE
-                    locusDataModel?.get(position)?.isCommentChecked = true
-                } else {
-                    itemView.commentView.visibility = View.GONE
-                    locusDataModel?.get(position)?.isCommentChecked = false
-                }
-            }
-            locusDataModel?.get(position)?.comment?.let {
-                itemView.commentView.setText(it)
-            }
-            itemView.commentView.addTextChangedListener(object : TextWatcher{
-                override fun afterTextChanged(p0: Editable?) {
-
-                }
-
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                }
-
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    locusDataModel?.get(position)?.comment = p0.toString()
-                }
-
-            })
-        }
-    }
-
     inner class BlankViewHolder(view: View) : BaseViewHolder(view) {
+    }
+
+    inner class CustomTextWatcher : TextWatcher {
+        var position: Int = 0
+
+        override fun afterTextChanged(p0: Editable?) {
+            // Not required
+        }
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            // Not required
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            locusDataModel?.get(position)?.comment = p0.toString()
+        }
 
     }
 }
